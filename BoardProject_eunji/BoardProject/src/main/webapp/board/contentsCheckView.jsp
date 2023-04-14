@@ -10,7 +10,7 @@
 </head>
 <body>
 	<form action="/updateContentsCheck.board?seq=${dto.seq}" method="post">
-		<table border="1">
+		<table border="1" align="center">
 			<tr>
 				<th height="40" colspan=2><input type="text" name="title"
 					id="title" value="${dto.title}"
