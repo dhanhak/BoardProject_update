@@ -37,12 +37,28 @@
 		</c:forEach>
 
 		<tr height="20">
-			<td align="center" colspan="5">${navi }</td>
+			<td align="center" colspan="5">
+			<c:forEach var="item" items="${navi}" varStatus="status">
+					<c:choose>
+						<c:when test="${item eq '<'}">
+							<a href="/list.board?cpage=${navi[status.index+1]-1}">${item}</a>
+						</c:when>
+						<c:when test="${item eq '>'}">
+							<a href="/list.board?cpage=${navi[status.index-1]+1}">${item}</a>
+						</c:when>
+					
+					<c:otherwise>
+						<a href="/list.board?cpage=${item}">${item}</a>
+					</c:otherwise>
+					</c:choose>
+				</c:forEach>
+				</td>
 		</tr>
 		<tr height="20">
-			<td align="right" colspan="5">
-			<a href="/toIndex.board"><input type="button" id="back" value="뒤로가기"></a> 
-			<a href="/toWriteForm.board"><input type="button" id="writeBtn" value="작성하기"></a></td>
+			<td align="right" colspan="5"><a href="/toIndex.board"><input
+					type="button" id="back" value="뒤로가기"></a> <a
+				href="/toWriteForm.board?cpage=${cpage }"><input type="button"
+					id="writeBtn" value="작성하기"></a></td>
 		</tr>
 	</table>
 

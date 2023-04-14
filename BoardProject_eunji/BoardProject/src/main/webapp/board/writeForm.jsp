@@ -22,7 +22,7 @@
 		</tr>
 		<tr>
 			<td align="right">
-				<a href="/list.board?cpage=1"> <input type="button" value="목록으로"></a>
+				<a href="/list.board?cpage=${cpage }"> <input type="button" value="목록으로"></a>
 				<a><input type="submit" value="작성완료"></a>
 			</td>
 		</tr>

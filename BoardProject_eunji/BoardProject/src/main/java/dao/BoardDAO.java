@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.StringBufferInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -170,7 +171,7 @@ public class BoardDAO {
 		}
 	}
 
-	public String getPageNavi(int currentPage) throws Exception{
+	public List<String> getPageNavi(int currentPage) throws Exception{
 		// 네비게이터를 만들기 위해 필요한 초기 정보
 		int recordTotalCount = getRecordCount();  	// 1. 전체 글의 개수
 		int recordCountPerPage = Settings.BOARD_RECORD_DOUNT_PER_PAGE;	// 2. 페이지당 보여줄 글의 개수
@@ -202,17 +203,18 @@ public class BoardDAO {
 		if(startNavi == 1) {needPrev = false;}
 		if(endNavi == pageTotalCount) {needNext = false;}
 
-		StringBuilder sb = new StringBuilder();
-
+		List<String> list = new ArrayList<String>();
+		
 		if(needPrev) {
-			sb.append("<a href='/list.board?cpage="+(startNavi-1)+"'> < </a>");
+			list.add("<");
 		}
 		for(int i=startNavi; i <= endNavi; i++) {
-			sb.append("<a href='/list.board?cpage="+i+"'>" + i + "</a> ");
+			list.add(""+i);
 		}
 		if(needNext) {
-			sb.append("<a href='/list.board?cpage="+(endNavi+1)+"'> > </a>");
+			list.add(">");
 		}
-		return sb.toString();
+		return list;
 	}
+	
 }

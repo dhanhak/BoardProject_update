@@ -28,19 +28,19 @@
 			<tr>
 				<c:choose>
 					<c:when test="${dto.writer == loginID}">
-						<td id="control" align="right" colspan=2><a
-							href="/list.board?cpage=1"><input type="button" id="back"
-								value="목록으로"></a> <a><input type="button" id="update"
-								value="수정하기"></a> <a
-							href="/deleteContentsCheck.board?seq=${dto.seq}"><input
-								type="button" id="delete" value="삭제하기"></a></td>
+						<td id="control" align="right" colspan=2>
+							<a href="/list.board?cpage=1">
+								<input type="button" id="back" value="목록으로"></a> 
+							<a>
+								<input type="button" id="update" value="수정하기"></a> 
+							<a href="/deleteContentsCheck.board?seq=${dto.seq}">
+								<input type="button" id="delete" value="삭제하기"></a>
+						</td>
 					</c:when>
 					<c:otherwise>
-						<c:forEach var="navi" items="${navi }">
 							<td align="right" colspan=2>
-								<a href="/list.board?cpage=${cpage }">
-									<input type="button" value="목록으로"></a></td>
-						</c:forEach>
+								<a href="/list.board?cpage=${cpage }"><input type="button" value="목록으로"></a>
+							</td>
 					</c:otherwise>
 				</c:choose>
 			</tr>

@@ -37,7 +37,7 @@ public class BoardController extends HttpServlet {
 				int end = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE;
 				
 				List<BoardDTO> arr = BoardDAO.getInstance().selectBound(start,end);
-				String pageNavi = BoardDAO.getInstance().getPageNavi(currentPage);
+				List<String> pageNavi = BoardDAO.getInstance().getPageNavi(currentPage);
 				
 				request.setAttribute("result", arr);
 				request.setAttribute("navi", pageNavi);
@@ -45,6 +45,9 @@ public class BoardController extends HttpServlet {
 				//response.sendRedirect("/member/board.jsp");
 				
 			}else if(cmd.equals("/toWriteForm.board")) {
+				int currentPage = Integer.parseInt(request.getParameter("cpage"));
+				request.getSession().setAttribute("cpage",currentPage);
+				
 				response.sendRedirect("/board/writeForm.jsp");
 				
 			}else if(cmd.equals("/toIndex.board")) {
