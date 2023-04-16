@@ -14,7 +14,7 @@
 			<tr>
 				<th height="40" colspan=2><input type="text" name="title"
 					id="title" value="${dto.title}"
-					style="text-align: center; width: 99%; height: 40px;" readonly>
+					style="text-align: center; width: 99%; height: 40px;" readonly>  
 				</th>
 			</tr>
 			<tr>
