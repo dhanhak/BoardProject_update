@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dao.BoardDAO;
+import dao.ReplyDAO;
 import dto.BoardDTO;
+import dto.ReplyDTO;
 import statics.Settings;
 
 @WebServlet("*.board")
@@ -69,6 +71,7 @@ public class BoardController extends HttpServlet {
 				
 			}else if(cmd.equals("/selectContentsCheck.board")) {
 				BoardDAO dao = BoardDAO.getInstance();
+				ReplyDAO replydao = ReplyDAO.getInstance();
 				
 				int searchSeq = Integer.parseInt(request.getParameter("seq"));
 				
@@ -80,6 +83,10 @@ public class BoardController extends HttpServlet {
 				// searchSeq에 해당하는 dto 반환
 				BoardDTO dto = dao.selectContentBySeq(searchSeq);
 				request.setAttribute("dto", dto);
+				
+				List<ReplyDTO> replylist = replydao.selectBySeq(searchSeq);
+				request.setAttribute("replylist", replylist);
+				
 				request.getRequestDispatcher("/board/contentsCheckView.jsp").forward(request, response);
 				
 			}else if(cmd.equals("/deleteContentsCheck.board")) {

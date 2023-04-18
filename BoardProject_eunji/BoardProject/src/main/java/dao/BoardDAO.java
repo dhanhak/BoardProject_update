@@ -1,6 +1,5 @@
 package dao;
 
-import java.io.StringBufferInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +16,6 @@ import dto.BoardDTO;
 import statics.Settings;
 
 public class BoardDAO {
-	BoardDTO dto = new BoardDTO();
 
 	private static BoardDAO instance = null;
 	public synchronized static BoardDAO getInstance() {
@@ -26,8 +24,6 @@ public class BoardDAO {
 		}
 		return instance;
 	}
-
-	private BoardDAO() {}
 
 	public Connection getConnection() throws Exception {
 		Context iCtx = new InitialContext();
