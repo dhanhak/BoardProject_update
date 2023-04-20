@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -11,9 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
 import dao.BoardDAO;
+import dao.FileDAO;
 import dao.ReplyDAO;
 import dto.BoardDTO;
+import dto.FileDTO;
 import dto.ReplyDTO;
 import statics.Settings;
 
@@ -56,11 +62,30 @@ public class BoardController extends HttpServlet {
 				response.sendRedirect("/index.jsp");
 				
 			}else if(cmd.equals("/insertContentsCheck.board")) {
+				String realPath = request.getServletContext().getRealPath("upload");
+				MultipartRequest multi = new MultipartRequest(request, realPath, 1024*1024*10,"UTF-8", new DefaultFileRenamePolicy());
+
 				String writer = (String)request.getSession().getAttribute("loginID");
-				String title = request.getParameter("title");
-				String contents = request.getParameter("contents");
+				String title = multi.getParameter("title");
+				String contents = multi.getParameter("contents");
 				
-				int result = BoardDAO.getInstance().insertContent(writer, title, contents);
+				FileDAO dao = FileDAO.getInstance();
+				
+				File realPathFile = new File(realPath);
+				if(!realPathFile.exists()) {
+					realPathFile.mkdir();
+				}
+				System.out.println(realPath);
+				String message = multi.getParameter("message");
+				System.out.println("전송 된 메세지 : " + message);
+				
+				String oriName = multi.getOriginalFileName("file");
+				String sysName = multi.getFilesystemName("file");
+
+				int boardseq = BoardDAO.getInstance().getBoardSeq();
+				int result = BoardDAO.getInstance().insertContent(boardseq,writer, title, contents);
+				dao.insert(new FileDTO(0,oriName,sysName,boardseq));
+				
 				//response.sendRedirect("/index.jsp?state=a_w");
 				if(result>0) {
 					response.setContentType("text/html; charset=UTF-8");
@@ -72,6 +97,7 @@ public class BoardController extends HttpServlet {
 			}else if(cmd.equals("/selectContentsCheck.board")) {
 				BoardDAO dao = BoardDAO.getInstance();
 				ReplyDAO replydao = ReplyDAO.getInstance();
+				FileDAO filedao = FileDAO.getInstance();
 				
 				int searchSeq = Integer.parseInt(request.getParameter("seq"));
 				
@@ -86,6 +112,9 @@ public class BoardController extends HttpServlet {
 				
 				List<ReplyDTO> replylist = replydao.selectBySeq(searchSeq);
 				request.setAttribute("replylist", replylist);
+				
+				FileDTO file = filedao.list(searchSeq);
+				request.setAttribute("file", file);
 				
 				request.getRequestDispatcher("/board/contentsCheckView.jsp").forward(request, response);
 				
@@ -115,8 +144,6 @@ public class BoardController extends HttpServlet {
 				}
 				
 			}
-			
-			
 			
 		}catch(Exception e) {
 			e.printStackTrace();

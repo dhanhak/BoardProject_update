@@ -26,7 +26,12 @@
 			<tr>
 				<c:choose>
 					<c:when test="${dto.writer == loginID}">
-						<td id="control" align="right" colspan=2>
+					<td colspan=1>첨부파일 :
+						<c:if test="${file.id != 0}">						
+							<span>${file.oriName}</span>
+						</c:if>
+					</td>
+					<td id="control" align="right" colspan=1>
 						<a href="/list.board?cpage=1"> 
 							<input type="button" id="back" value="목록으로"></a> 
 						<a> 

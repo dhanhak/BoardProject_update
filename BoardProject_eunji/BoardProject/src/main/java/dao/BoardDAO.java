@@ -30,19 +30,30 @@ public class BoardDAO {
 		DataSource ds = (DataSource)iCtx.lookup("java:/comp/env/jdbc/ora");
 		return ds.getConnection();
 	}
+	
+	public int getBoardSeq() throws Exception {
+		String sql = "SELECT BOARD_SEQ.nextval FROM DUAL";
+		try(Connection con = this.getConnection();
+				PreparedStatement pstat = con.prepareStatement(sql);
+				ResultSet rs = pstat.executeQuery();){
+			rs.next();
+			
+			return rs.getInt(1);
+		}
+	}
 
-	public int insertContent(String writer, String title, String contents) throws Exception {
-		String sql = "insert into board values(board_seq.nextval,?,?,?,0,sysdate)";
+	public int insertContent(int boardseq, String writer, String title, String contents) throws Exception {
+		String sql = "insert into board values(?,?,?,?,0,sysdate)";
 
 		try(
 				Connection con = this.getConnection();
 				PreparedStatement pstat = con.prepareStatement(sql);){
-			pstat.setString(1, writer);
-			pstat.setString(2, title);
-			pstat.setString(3, contents);
+			pstat.setInt(1, boardseq);
+			pstat.setString(2, writer);
+			pstat.setString(3, title);
+			pstat.setString(4, contents);
 
 			int result = pstat.executeUpdate();
-			System.out.println(result);
 			con.commit();
 			return result;
 		}

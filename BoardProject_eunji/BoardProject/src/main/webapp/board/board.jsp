@@ -55,10 +55,21 @@
 				</td>
 		</tr>
 		<tr height="20">
-			<td align="right" colspan="5"><a href="/toIndex.board"><input
-					type="button" id="back" value="뒤로가기"></a> <a
-				href="/toWriteForm.board?cpage=${cpage }"><input type="button"
-					id="writeBtn" value="작성하기"></a></td>
+			<td colspan="1">
+				<select>
+					<option name="">제목</option>
+					<option name="">작성자</option>
+				</select>
+			</td>
+			<td colspan="2" align="center"><input type="text" name="search" style="width:300px"></td>
+			<td align="right" colspan="2">
+			<form action="">
+				<input type="submit" value="검색">
+				<a href="/toIndex.board">
+					<input type="button" id="back" value="뒤로가기"></a> 
+				<a href="/toWriteForm.board?cpage=${cpage}">
+					<input type="button" id="writeBtn" value="작성하기"></a></td>
+			</form>
 		</tr>
 	</table>
 
