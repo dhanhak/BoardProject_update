@@ -27,8 +27,8 @@
 				<c:choose>
 					<c:when test="${dto.writer == loginID}">
 					<td colspan=1>첨부파일 :
-						<c:if test="${file.id != 0}">						
-							<span>${file.oriName}</span>
+						<c:if test="${file.id != 0}">			
+							<a href="/download.file?sysName=${file.sysName}&oriName=${file.oriName}">${file.oriName}</a>
 						</c:if>
 					</td>
 					<td id="control" align="right" colspan=1>

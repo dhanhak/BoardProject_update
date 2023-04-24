@@ -45,12 +45,11 @@ public class BoardController extends HttpServlet {
 				int end = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE;
 				
 				List<BoardDTO> arr = BoardDAO.getInstance().selectBound(start,end);
-				List<String> pageNavi = BoardDAO.getInstance().getPageNavi(currentPage);
+				List<String> pageNavi = BoardDAO.getInstance().getPageNavi(currentPage,null,null);
 				
 				request.setAttribute("result", arr);
 				request.setAttribute("navi", pageNavi);
 				request.getRequestDispatcher("/board/board.jsp").forward(request, response);
-				//response.sendRedirect("/member/board.jsp");
 				
 			}else if(cmd.equals("/toWriteForm.board")) {
 				int currentPage = Integer.parseInt(request.getParameter("cpage"));
@@ -63,6 +62,12 @@ public class BoardController extends HttpServlet {
 				
 			}else if(cmd.equals("/insertContentsCheck.board")) {
 				String realPath = request.getServletContext().getRealPath("upload");
+				
+				File realPathFile = new File(realPath);
+				if(!realPathFile.exists()) {
+					realPathFile.mkdir();
+				}
+				
 				MultipartRequest multi = new MultipartRequest(request, realPath, 1024*1024*10,"UTF-8", new DefaultFileRenamePolicy());
 
 				String writer = (String)request.getSession().getAttribute("loginID");
@@ -71,10 +76,7 @@ public class BoardController extends HttpServlet {
 				
 				FileDAO dao = FileDAO.getInstance();
 				
-				File realPathFile = new File(realPath);
-				if(!realPathFile.exists()) {
-					realPathFile.mkdir();
-				}
+				
 				System.out.println(realPath);
 				String message = multi.getParameter("message");
 				System.out.println("전송 된 메세지 : " + message);
@@ -143,6 +145,25 @@ public class BoardController extends HttpServlet {
 					pwriter.close();
 				}
 				
+			}else if(cmd.equals("/search.board")) {
+				
+				BoardDAO dao = BoardDAO.getInstance();
+				int currentPage = Integer.parseInt(request.getParameter("cpage"));
+				
+				String sel = request.getParameter("sel");
+				String search = request.getParameter("search");
+				int start = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE -(Settings.BOARD_RECORD_DOUNT_PER_PAGE-1);
+				int end = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE;
+				
+				List<BoardDTO> list = dao.searchBoard(start, end, sel, search);
+				
+				List<String> pageNavi = dao.getPageNavi(currentPage,sel,search);
+				System.out.println(search);
+				request.setAttribute("sel", sel);
+				request.setAttribute("search", search);
+				request.setAttribute("result", list);
+				request.setAttribute("navi", pageNavi);
+				request.getRequestDispatcher("/board/board.jsp").forward(request, response);
 			}
 			
 		}catch(Exception e) {

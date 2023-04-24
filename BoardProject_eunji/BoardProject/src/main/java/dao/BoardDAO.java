@@ -30,14 +30,13 @@ public class BoardDAO {
 		DataSource ds = (DataSource)iCtx.lookup("java:/comp/env/jdbc/ora");
 		return ds.getConnection();
 	}
-	
+
 	public int getBoardSeq() throws Exception {
 		String sql = "SELECT BOARD_SEQ.nextval FROM DUAL";
 		try(Connection con = this.getConnection();
 				PreparedStatement pstat = con.prepareStatement(sql);
 				ResultSet rs = pstat.executeQuery();){
 			rs.next();
-			
 			return rs.getInt(1);
 		}
 	}
@@ -129,7 +128,7 @@ public class BoardDAO {
 			return result;
 		}
 	}
-	
+
 	// 1 select * from board order by seq desc;
 	public List<BoardDTO> selectBound(int start, int end) throws Exception{
 		String sql = "select * from(select board.*, row_number() over(order by seq desc) rn from board)where rn BETWEEN ? and ?";
@@ -167,21 +166,40 @@ public class BoardDAO {
 			return result;
 		}
 	}
-	
-	private int getRecordCount() throws Exception {
-		String sql = "SELECT count(*) FROM BOARD";
+
+	private int getRecordCount(String sel, String search) throws Exception {
+		String sql = "SELECT count(*) FROM BOARD where "+ sel +" like ?";
 		try(Connection con = this.getConnection();
-				PreparedStatement pstat = con.prepareStatement(sql);
-				ResultSet rs = pstat.executeQuery();){
+				PreparedStatement pstat = con.prepareStatement(sql);){
+			pstat.setString(1, "%"+search+"%");
+			try(ResultSet rs = pstat.executeQuery();){
 				rs.next();
 				return rs.getInt(1);
+			}
+		}
+	}
+	
+	private int getRecordCommonCount() throws Exception {
+		String sql = "SELECT count(*) FROM BOARD";
+		try(Connection con = this.getConnection();
+				PreparedStatement pstat = con.prepareStatement(sql);){
+			try(ResultSet rs = pstat.executeQuery();){
+				rs.next();
+				return rs.getInt(1);
+			}
 		}
 	}
 
-	public List<String> getPageNavi(int currentPage) throws Exception{
+	public List<String> getPageNavi(int currentPage, String sel, String search) throws Exception{
 		// 네비게이터를 만들기 위해 필요한 초기 정보
-		int recordTotalCount = getRecordCount();  	// 1. 전체 글의 개수
-		int recordCountPerPage = Settings.BOARD_RECORD_DOUNT_PER_PAGE;	// 2. 페이지당 보여줄 글의 개수
+		int recordTotalCount = 0;
+		if(sel==null && search==null) {
+			recordTotalCount = getRecordCommonCount();  	// 1. 전체 글의 개수
+		}else {
+			recordTotalCount = getRecordCount(sel, search);
+		}
+//		System.out.println(recordTotalCount);
+		int recordCountPerPage = Settings.BOARD_RECORD_COUNT_PER_PAGE;	// 2. 페이지당 보여줄 글의 개수
 		int naviCountPerPage = Settings.BOARD_NAVI_COUNT_PER_PAGE;		// 3. 페이지당 보여줄 네비게이터의 개수
 
 		int pageTotalCount;			// 4. 1번과 2번 항복에 의해 총 페이지의 개수가 정해짐
@@ -211,7 +229,7 @@ public class BoardDAO {
 		if(endNavi == pageTotalCount) {needNext = false;}
 
 		List<String> list = new ArrayList<String>();
-		
+
 		if(needPrev) {
 			list.add("<");
 		}
@@ -223,5 +241,30 @@ public class BoardDAO {
 		}
 		return list;
 	}
-	
+
+	public List<BoardDTO> searchBoard(int start, int end, String sel,  String search) throws Exception {
+		String sql = "select * from(select board.*, row_number() over(order by seq desc) rn from board where "+sel+" like ?)where rn BETWEEN ? and ?";
+		try(Connection con = this.getConnection();
+				PreparedStatement pstat = con.prepareStatement(sql);){
+			pstat.setString(1, "%" +search + "%" );
+			pstat.setInt(2, start);
+			pstat.setInt(3, end);
+			try(ResultSet rs = pstat.executeQuery()){
+				List<BoardDTO> list = new ArrayList<>();
+				while(rs.next()) {
+					int id = rs.getInt("seq");
+					String writer = rs.getString("writer");
+					String title = rs.getString("title");
+					String contents = rs.getString("contents");
+
+					int view_count = rs.getInt("view_count");
+					Timestamp write_date = rs.getTimestamp("write_date");
+					BoardDTO dto = new BoardDTO(id, writer, title, contents, view_count, write_date);
+					list.add(dto);
+				}
+				return list;
+			}
+		}
+	}
+
 }

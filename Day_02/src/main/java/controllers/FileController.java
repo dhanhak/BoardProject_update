@@ -1,10 +1,13 @@
 package controllers;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,10 +54,33 @@ public class FileController extends HttpServlet {
 				response.sendRedirect("/");
 
 			}else if(cmd.equals("/list.file")) {
+				
 				List<FilesDTO> list = dao.list();
 				request.setAttribute("list", list);
 
-				request.getRequestDispatcher("/file/fileList.jsp").forward(request, response);
+				request.getRequestDispatcher("/file/list.jsp").forward(request, response);
+			}else if(cmd.equals("/download.file")) {
+				
+				String oriName = request.getParameter("oriName");
+				
+				oriName = new String(oriName.getBytes("utf-8"), "ISO-8859-1");
+				
+				response.reset();
+				response.setHeader("Content-Disposition", "attachment;filename=" + oriName);
+
+				String uploadPath = request.getServletContext().getRealPath("upload");
+				String sysName = request.getParameter("sysName");
+
+				File target = new File(uploadPath + "/" + sysName);
+
+				try(ServletOutputStream sos = response.getOutputStream();
+						FileInputStream fis = new FileInputStream(target);
+						DataInputStream dis = new DataInputStream(fis);){
+					byte[] fileContents = new byte[(int) target.length()];
+					dis.readFully(fileContents);
+					sos.write(fileContents);
+					sos.flush();
+				}
 			}
 			
 		}catch (Exception e) {
