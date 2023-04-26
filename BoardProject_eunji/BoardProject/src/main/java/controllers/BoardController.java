@@ -41,8 +41,8 @@ public class BoardController extends HttpServlet {
 				// 1 -> 1, 10
 				// 2 -> 11, 20
 				// 3 -> 21, 30
-				int start = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE -(Settings.BOARD_RECORD_DOUNT_PER_PAGE-1);
-				int end = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE;
+				int start = currentPage * Settings.BOARD_RECORD_COUNT_PER_PAGE -(Settings.BOARD_RECORD_COUNT_PER_PAGE-1);
+				int end = currentPage * Settings.BOARD_RECORD_COUNT_PER_PAGE;
 				
 				List<BoardDTO> arr = BoardDAO.getInstance().selectBound(start,end);
 				List<String> pageNavi = BoardDAO.getInstance().getPageNavi(currentPage,null,null);
@@ -152,8 +152,8 @@ public class BoardController extends HttpServlet {
 				
 				String sel = request.getParameter("sel");
 				String search = request.getParameter("search");
-				int start = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE -(Settings.BOARD_RECORD_DOUNT_PER_PAGE-1);
-				int end = currentPage * Settings.BOARD_RECORD_DOUNT_PER_PAGE;
+				int start = currentPage * Settings.BOARD_RECORD_COUNT_PER_PAGE -(Settings.BOARD_RECORD_COUNT_PER_PAGE-1);
+				int end = currentPage * Settings.BOARD_RECORD_COUNT_PER_PAGE;
 				
 				List<BoardDTO> list = dao.searchBoard(start, end, sel, search);
 				
