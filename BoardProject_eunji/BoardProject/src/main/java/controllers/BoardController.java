@@ -25,6 +25,10 @@ import statics.Settings;
 
 @WebServlet("*.board")
 public class BoardController extends HttpServlet {
+	
+	private String XSSCheck(String text) {
+		return text.replaceAll("<script>", "&lt;script");
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf8");
@@ -58,7 +62,7 @@ public class BoardController extends HttpServlet {
 				response.sendRedirect("/board/writeForm.jsp");
 				
 			}else if(cmd.equals("/toIndex.board")) {
-				response.sendRedirect("/index.jsp");
+				response.sendRedirect("/board/boardWrite.jsp");
 				
 			}else if(cmd.equals("/insertContentsCheck.board")) {
 				String realPath = request.getServletContext().getRealPath("upload");
@@ -73,6 +77,9 @@ public class BoardController extends HttpServlet {
 				String writer = (String)request.getSession().getAttribute("loginID");
 				String title = multi.getParameter("title");
 				String contents = multi.getParameter("contents");
+				
+//				XSSCheck(title);								Div에서 스크립트 방어코드 스마트에디터에선 자동 
+//				contents.replaceAll("<script>", "&lt;script");
 				
 				FileDAO dao = FileDAO.getInstance();
 				

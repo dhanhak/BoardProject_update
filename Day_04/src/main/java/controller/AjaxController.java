@@ -17,7 +17,6 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import dto.ContactDTO;
-import dto.FilesDTO;
 
 @WebServlet("*.ajax")
 public class AjaxController extends HttpServlet {
